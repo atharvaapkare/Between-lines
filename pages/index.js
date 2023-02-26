@@ -1,13 +1,38 @@
-import { useState } from 'react';
+import React,{Component, useState } from 'react';
 import Head from 'next/head';
 import Image from 'next/image';
 import buildspaceLogo from '../assets/buildspace-logo.png';
 
 const Home = () => {
   const [userInput, setUserInput] = useState('');
+  const [apiOutput, setApiOutput] = useState('')
+const [isGenerating, setIsGenerating] = useState(false)
+
+const callGenerateEndpoint = async () => {
+  setIsGenerating(true);
+  
+  console.log("Calling OpenAI...")
+  console.log("Calling OpenAI...")
+  const response = await fetch('/api/generate', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ userInput }),
+  });
+
+  const data = await response.json();
+  const { output } = data;
+  console.log("OpenAI replied...", output.text)
+
+  setApiOutput(`${output.text}`);
+  setIsGenerating(false);
+}
   const onUserChangedText = (event) => {
     setUserInput(event.target.value);
   };
+
+
   return (
     <div className="root">
       <Head>
@@ -16,10 +41,10 @@ const Home = () => {
       <div className="container">
         <div className="header">
           <div className="header-title">
-            <h1>L Y R I C A L L Y.</h1>
+            <h1>Between lines.</h1>
           </div>
           <div className="header-subtitle">
-            <h2>Please type the name of the song you want to understand.</h2>
+            <h2>Please type the name of the movie you want book recommendations for.</h2>
           </div>
         </div>
       </div>
@@ -32,14 +57,32 @@ const Home = () => {
   />
 
 <div className="prompt-buttons">
-    <a className="generate-button" onClick={null}>
-      <div className="generate">
-        <p>Generate</p>
-      </div>
-    </a>
+<a
+    className={isGenerating ? 'generate-button loading' : 'generate-button'}
+    onClick={callGenerateEndpoint}
+  >
+    <div className="generate">
+    {isGenerating ? <span className="loader"></span> : <p>Generate</p>}
+    </div>
+  </a>
+   
   </div>
+  {apiOutput && (
+  <div className="output">
+    <div className="output-header-container">
+      <div className="output-header">
+        <h3>Output</h3>
+      </div>
+    </div>
+    <div className="output-content">
+     <p> <a>{apiOutput}</a></p>
+     <a href="https://google.com">gg</a>
+    </div>
+  </div>
+)}
         </div>
     </div>
+    
   );
 };
 
