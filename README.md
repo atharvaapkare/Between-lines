@@ -1,3 +1,4 @@
-# buildspace 
+# Between Lines 
 ### Welcome 👋
-This is the starter template for the [build your own AI writing assistant w/ GPT-3](https://buildspace.so/builds/ai-writer) project.
+Ai - writer which helps in suggesting books based on your recently watched movie.
+(Make it possible to add more than 2 movies.)
