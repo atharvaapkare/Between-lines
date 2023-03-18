@@ -1,13 +1,13 @@
-import React,{Component, useState } from 'react';
+import React,{Component, useState ,Fragment} from 'react';
 import Head from 'next/head';
 import Image from 'next/image';
 import buildspaceLogo from '../assets/buildspace-logo.png';
-
+import parse from 'html-react-parser';
 const Home = () => {
   const [userInput, setUserInput] = useState('');
   const [apiOutput, setApiOutput] = useState('')
 const [isGenerating, setIsGenerating] = useState(false)
-
+var d="";
 const callGenerateEndpoint = async () => {
   setIsGenerating(true);
   
@@ -23,14 +23,35 @@ const callGenerateEndpoint = async () => {
 
   const data = await response.json();
   const { output } = data;
-  console.log("OpenAI replied...", output.text)
-
-  setApiOutput(`${output.text}`);
+  console.log("OpenAI replied...",linkify(output.text))
+d=JSON.stringify(linkify(output.text))
+//setApiOutput(`${linkify(output.text).ToString(Formatting.None)}`)
+  setApiOutput(`${JSON.stringify(linkify(output.text).replace('\n', ''))}`);
   setIsGenerating(false);
 }
   const onUserChangedText = (event) => {
     setUserInput(event.target.value);
   };
+
+  function linkify(inputText) {
+    var replacedText, replacePattern1, replacePattern2, replacePattern3;
+
+    //URLs starting with http://, https://, or ftp://
+    replacePattern1 = /(\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim;
+    replacedText = inputText.replace(replacePattern1, '<a href="$1" target="_blank">$1</a>');
+
+    //URLs starting with "www." (without // before it, or it'd re-link the ones done above).
+    replacePattern2 = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
+    replacedText = replacedText.replace(replacePattern2, '$1<a href="http://$2" target="_blank">$2</a>');
+
+    //Change email addresses to mailto:: links.
+    replacePattern3 = /(([a-zA-Z0-9\-\_\.])+@[a-zA-Z\_]+?(\.[a-zA-Z]{2,6})+)/gim;
+    replacedText = replacedText.replace(replacePattern3, '<a href="mailto:$1">$1</a>');
+
+    return replacedText;
+}
+
+
 
 
   return (
@@ -67,6 +88,8 @@ const callGenerateEndpoint = async () => {
   </a>
    
   </div>
+  
+  
   {apiOutput && (
   <div className="output">
     <div className="output-header-container">
@@ -74,9 +97,10 @@ const callGenerateEndpoint = async () => {
         <h3>Output</h3>
       </div>
     </div>
+    
     <div className="output-content">
-     <p> <a>{apiOutput}</a></p>
-     <a href="https://google.com">gg</a>
+      <div><p>{apiOutput}</p></div>
+    <div> <p>{parse(apiOutput)}</p> </div>
     </div>
   </div>
 )}
