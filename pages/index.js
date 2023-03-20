@@ -3,11 +3,15 @@ import Head from 'next/head';
 import Image from 'next/image';
 import buildspaceLogo from '../assets/buildspace-logo.png';
 import parse from 'html-react-parser';
+
+var ea="";
 const Home = () => {
+  var d="";
   const [userInput, setUserInput] = useState('');
   const [apiOutput, setApiOutput] = useState('')
 const [isGenerating, setIsGenerating] = useState(false)
-var d="";
+
+ 
 const callGenerateEndpoint = async () => {
   setIsGenerating(true);
   
@@ -24,14 +28,19 @@ const callGenerateEndpoint = async () => {
   const data = await response.json();
   const { output } = data;
   console.log("OpenAI replied...",linkify(output.text))
-d=JSON.stringify(linkify(output.text))
+ d=JSON.stringify(linkify(output.text))
+
 //setApiOutput(`${linkify(output.text).ToString(Formatting.None)}`)
   setApiOutput(`${JSON.stringify(linkify(output.text).replace('\n', ''))}`);
   setIsGenerating(false);
 }
+
   const onUserChangedText = (event) => {
     setUserInput(event.target.value);
   };
+function giveOutput(){
+  return d;
+}
 
   function linkify(inputText) {
     var replacedText, replacePattern1, replacePattern2, replacePattern3;
@@ -99,13 +108,19 @@ d=JSON.stringify(linkify(output.text))
     </div>
     
     <div className="output-content">
-      <div><p>{apiOutput}</p></div>
+      
     <div> <p>{parse(apiOutput)}</p> </div>
+    
+    
+
+
     </div>
   </div>
 )}
         </div>
     </div>
+
+    
     
   );
 };

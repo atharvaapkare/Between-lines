@@ -6,7 +6,7 @@ const configuration = new Configuration({
 });
 
 const openai = new OpenAIApi(configuration);
-const basePromptPrefix = "GIve me book recommendation based on " ;
+const basePromptPrefix = "Give me book recommendation based on " ;
 const t="  movie and links of their description.";
 const generateAction = async (req, res) => {
   // Run first prompt
